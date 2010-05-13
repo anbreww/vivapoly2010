@@ -1,7 +1,7 @@
 #include <avr/io.h>
 #include "robopoly_i2c.h"
 #include "config.h"
-#include "Nunchuk.h"
+#include "nunchuk.h"
 #include <stdio.h>
 #include <util/delay.h>
 #include "robopoly.h"

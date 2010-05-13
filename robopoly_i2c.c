@@ -6,7 +6,7 @@
 //#include "robopoly_uart.h"
 
 
-void i2c_init_master()
+void i2c_init_master(void)
 {
 	#ifndef F_SCL
 	#warning "F_SCL not defined, will be set to 100Khz"
@@ -42,7 +42,7 @@ void i2c_init_slave(unsigned char addr)
 }
 
 /* Master function: send a START sequence and hold SCL and SDA low*/
-void i2c_send_start_block()
+void i2c_send_start_block(void)
 {
 	TWCR = (1<<TWINT) +(1<<TWEN) +(1<<TWSTA);
 	i2c_wait();
@@ -53,7 +53,7 @@ void i2c_send_start_block()
 
 }
 
-void i2c_send_restart_block()
+void i2c_send_restart_block(void)
 {
 	TWCR = (1<<	TWINT) +(1<<TWEN) +(1<<TWSTA);
 	i2c_wait();
@@ -66,7 +66,7 @@ void i2c_send_restart_block()
 	
 
 /*Master function: send a STOP sequence and set SCL and SDA in opendrain mode*/
-void i2c_send_stop_block()
+void i2c_send_stop_block(void)
 {
 	TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWSTO);
 }
@@ -142,7 +142,7 @@ unsigned char i2c_read_byte_block(unsigned char ack)
 
 /*Slave function, wait for a valid call and send an ACK sequence
 return read or write (LSB adress byte) or 255 if adress is false (not this chip called) */
-unsigned char i2c_read_addr_slave_block()
+unsigned char i2c_read_addr_slave_block(void)
 {
 	TWCR = (1<<TWEA) | (1<<TWEN) |(1<<TWINT); 
 	i2c_wait();
@@ -163,7 +163,7 @@ unsigned char i2c_read_addr_slave_block()
 
 
 /* Slave receiver function return value of incoming buffer and send an ACK sequence*/ 
-unsigned char i2c_read_byte_slave_block()
+unsigned char i2c_read_byte_slave_block(void)
 {
 	unsigned char temp = TWDR;
 	TWCR = (1<<TWINT) |(1<<TWEN) |(1<<TWEA);
@@ -202,7 +202,7 @@ void i2c_write_byte_slave_block(unsigned char arg)
 
 
 /*Internal function, do not use! */
-void i2c_wait()
+void i2c_wait(void)
 {
 	while((TWCR &(1<<TWINT)) == 0);
 }

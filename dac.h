@@ -17,7 +17,7 @@
 #define TRIM_GAS	PA6	/* pot to set gas offset */
 
 void dac_init(void);
-void pots_read_offsets(int8_t *steer_offset, int8_t *gas_offset);
+void pots_read_offsets(uint8_t *steer_offset, uint8_t *gas_offset);
 void adc_init(void);
 void dac_set_offsets(int8_t steer_value, int8_t gas_value);
 void dac_set_gas(uint8_t gas_value);

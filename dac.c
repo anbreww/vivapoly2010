@@ -16,7 +16,7 @@ void dac_init(void)
 	// set clock source, fast PWM mode
 	TCCR1A = (0b10 << COM1A0)  	// non-inverting
 		| (0b10 << COM1B0)
-		| (0b01 << WGM10) 	// 8-bit mode
+		| (0b11 << WGM10) 	// 8-bit mode
 		;
 	TCCR1B = (0b01 << WGM12)	// Fast PWM
 		| (1 << CS10)		// Prescaler 1
@@ -35,7 +35,7 @@ void dac_init(void)
 /*
  * read analog values from potentiometers (to set offsets)
  */
-void pots_read_offsets(int8_t *steer_offset, int8_t *gas_offset)
+void pots_read_offsets(uint8_t *steer_offset, uint8_t *gas_offset)
 {
 	uint8_t steer_adc, gas_adc;
 
@@ -48,7 +48,7 @@ void pots_read_offsets(int8_t *steer_offset, int8_t *gas_offset)
 
 	steer_adc = ADCH; 
 
-	ADMUX =0x20+6;  // STEERING BIT
+	ADMUX =0x20+6;  // GAS BIT
 	ADCSRA |= (1<<ADSC); 
 	while((ADCSRA & (1<<ADSC))>>ADSC);
 
@@ -58,8 +58,8 @@ void pots_read_offsets(int8_t *steer_offset, int8_t *gas_offset)
 
 	/* calculate offset */
 
-	*steer_offset = 128 - steer_adc;
-	*gas_offset = 128 - gas_adc;
+	*steer_offset = steer_adc;
+	*gas_offset = gas_adc;
 
 	return;
 }
@@ -81,31 +81,41 @@ void dac_set_offsets(int8_t steer_value, int8_t gas_value)
 	OCR1A = steer;
 	++steer;
 	// set PWM B value
-	OCR1B = 0x07FF;
+	OCR1B = 0x02FF;
 	return;
 }
 
 /*
  * set car's speed. 0 is stop, positive = forward
  * adjust with potentiometers until zero == halt
+ * gas_value : 1 step = 20mV
+ * gas_offset : full range  = 1.2V
  */
-#define GAS_LOW 100
-#define GAS_HIGH 150
+#define GAS_LOW 0 	/* lower bound for input */
+#define GAS_HIGH 50 	/* higher bound for input */
+#define GAS_CENTER 106	/* PWM value for 2.5v */
 void dac_set_gas(uint8_t gas_value)
 {
 	uint16_t pwm_val;
+	uint8_t steer_offset, gas_offset;
 
-	gas_value += 100;
+	/* unorthodox way to get the offset values from potentiometers */
+	pots_read_offsets(&steer_offset, &gas_offset);
 
+
+	/* check input */
 	if (gas_value > GAS_HIGH)
 		pwm_val = GAS_HIGH;
 	else if (gas_value < GAS_LOW)
 		pwm_val = GAS_LOW;
 	else
 		pwm_val = gas_value;
+
+	/* add hard-coded offset for 2.5v */
+	pwm_val += GAS_CENTER;
 	
-	// set GAS PWM
-	OCR1A = pwm_val;
+	/* set PWM with previously acquired ADC offset */
+	OCR1A = (pwm_val << 2) - 64 + gas_offset/2; 
 	return;
 }
 
@@ -113,13 +123,16 @@ void dac_set_gas(uint8_t gas_value)
  * set car's direction. 0 should be center, positive = right
  * adjust with potentiometer until zero centers wheels
  */
-#define STEER_LOW 100
-#define STEER_HIGH 150
+#define STEER_LOW 0		/* lower bound for input */
+#define STEER_HIGH 50		/* higher bound for input */
+#define STEER_CENTER 100	/* pwm value for 2.5v */
 void dac_set_steer(uint8_t steer_value)
 {
 	uint16_t pwm_val = 0;
+	uint8_t steer_offset, gas_offset;
 
-	steer_value += 100;
+	pots_read_offsets(&steer_offset, &gas_offset);
+
 
 	if (steer_value > STEER_HIGH)
 		pwm_val = STEER_HIGH;
@@ -127,8 +140,10 @@ void dac_set_steer(uint8_t steer_value)
 		pwm_val = STEER_LOW;
 	else
 		pwm_val = steer_value;
+
+	pwm_val += STEER_CENTER;
 	
 	// set Steering PWM
-	OCR1B = pwm_val;
+	OCR1B = (pwm_val << 2) - 64 + steer_offset/2;
 	return;
 }

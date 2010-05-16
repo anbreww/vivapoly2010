@@ -14,15 +14,17 @@ int main (void)
 	dac_init();
 	adc_init();
 
-	uint8_t gas = 0;
+	uint8_t gas = 25;
 
 	while(1)
 	{
-		++gas;
+		//++gas;
 		if(gas > 50)
 			gas = 0;
-		_delay_ms(200);
+		_delay_ms(1);
 		dac_set_gas(gas);
 		dac_set_steer(gas);
+	//OCR1A = 0x01FF;
+	//OCR1B = 0x007F;
 	}
 }

@@ -92,8 +92,8 @@ void dac_set_offsets(int8_t steer_value, int8_t gas_value)
  * gas_offset : full range  = 1.2V
  */
 #define GAS_LOW 0 	/* lower bound for input */
-#define GAS_HIGH 50 	/* higher bound for input */
-#define GAS_CENTER 106	/* PWM value for 2.5v */
+#define GAS_HIGH 60 	/* higher bound for input */
+#define GAS_CENTER 101	/* PWM value for 2.5v */
 void dac_set_gas(uint8_t gas_value)
 {
 	uint16_t pwm_val;
@@ -124,8 +124,8 @@ void dac_set_gas(uint8_t gas_value)
  * adjust with potentiometer until zero centers wheels
  */
 #define STEER_LOW 0		/* lower bound for input */
-#define STEER_HIGH 50		/* higher bound for input */
-#define STEER_CENTER 100	/* pwm value for 2.5v */
+#define STEER_HIGH 60		/* higher bound for input */
+#define STEER_CENTER 95	/* pwm value for 2.5v */
 void dac_set_steer(uint8_t steer_value)
 {
 	uint16_t pwm_val = 0;

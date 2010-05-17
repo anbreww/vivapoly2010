@@ -111,6 +111,9 @@ void dac_set_gas(uint8_t gas_value)
 	else
 		pwm_val = gas_value;
 
+	/* invert controls (speed control is inverted) */
+	pwm_val = GAS_HIGH - pwm_val;
+
 	/* add hard-coded offset for 2.5v */
 	pwm_val += GAS_CENTER;
 	

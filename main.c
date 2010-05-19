@@ -26,11 +26,20 @@ nunchuk my_nunchuk;
 int forward = 0;
 int angular = 0;
 
+struct FLAGS
+{
+	int boost_available:1;
+	int boost_enabled:1;
+} flags;
+
+void init_flags(void);
+
 int main(void)
 {
 	nunchuk_init();
 	adc_init();
 	dac_init();
+	init_flags();
 
 
 	while(1)
@@ -49,6 +58,53 @@ int main(void)
 
 	return 0;
 }
+
+void init_flags(void)
+{
+	flags.boost_available = 1;
+	flags.boost_enabled = 0;
+}
+/*
+ * Boost timer, step one : boost is active for a short while
+ * Short timer interrupt disables boost then launches a longer timer.
+ * At the end of long period, boost is re-enabled
+ */
+#define BOOST_DURATION 3
+#define INTERVAL_BETWEEN_BOOSTS	15
+void call_booster(void)
+{
+	/* are we allowed to use the booster yet? */
+	if (flags.boost_available && !flags.boost_enabled)
+	{
+		/* not available until timeout */
+		flags.boost_available = 0;
+		/* give a few seconds of boost */
+		flags.boost_enabled = 1;
+		/* start timer for deactivation */
+		// TODO
+	}
+	/* all other cases : just wait for timer to time out */
+	return;
+}
+
+/* function that gets called by booster timer overflow */
+// TODO : rename this function
+void overflow_callback(void)
+{
+	/* if booster is currently in use */
+	if (flags.boost_enabled)
+	{
+		flags.boost_enabled = 0;
+		/* start long timer to re-enable */
+		// TODO
+	}
+	else
+	{
+		/* we've waited long enough : let's have some boost again! */
+		flags.boost_available = 1;
+	}
+}
+
 
 
 void acc_dec(nunchuk * _nunchuk, int * _forward, int * _angular)

@@ -144,6 +144,8 @@ void dac_set_steer(uint8_t steer_value)
 	else
 		pwm_val = steer_value;
 
+	pwm_val = STEER_HIGH - pwm_val;
+
 	pwm_val += STEER_CENTER;
 	
 	// set Steering PWM

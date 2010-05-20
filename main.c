@@ -26,13 +26,21 @@ nunchuk my_nunchuk;
 int forward = 0;
 int angular = 0;
 
-struct FLAGS
+typedef struct 
 {
 	int boost_available:1;
 	int boost_enabled:1;
-} flags;
+	int reverse_steering:1;
+	int reverse_speed:1;
+	int randomness:1;
+	int most_dangerous_game:1;
+	int killswitch_engaged:1;
+} Flags;
+
+Flags flags;
 
 void init_flags(void);
+void read_config(Flags * _flags);
 
 int main(void)
 {
@@ -58,6 +66,38 @@ int main(void)
 
 	return 0;
 }
+
+/*
+ * Read configuration from DIP switch
+ */
+#define CONFIG_DDR	DDRA
+#define CONFIG_PINS	PINA
+#define CONFIG_DANGEROUS	PA0
+#define CONFIG_RANDOM		PA1
+#define CONFIG_REV_STEER	PA2
+#define CONFIG_REV_SPEED	PA3
+#define CONFIG_KILLSWITCH	PA4	/* main disable switch */
+#define read_pin(pin, var)	(_flags->var = bit_is_set(CONFIG_PINS,pin) ? 1 : 0 )
+void read_config(Flags * _flags)
+{
+	/* reverse steering or gas control */
+	read_pin(CONFIG_REV_STEER,	reverse_steering);
+	read_pin(CONFIG_REV_SPEED,	reverse_speed);
+
+	/* emergency off button */
+	read_pin(CONFIG_KILLSWITCH, 	killswitch_engaged);
+
+	/* randomly change one of the ACTIVE reversals */
+	read_pin(CONFIG_RANDOM, 	randomness);
+
+	/* 
+	 * now we must play... THE MOST DANGEROUS GAME 
+	 * ( remove speed limits )
+	 */
+	read_pin(CONFIG_DANGEROUS, 	most_dangerous_game);
+}
+
+
 
 void init_flags(void)
 {

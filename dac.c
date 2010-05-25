@@ -93,7 +93,7 @@ void dac_set_offsets(int8_t steer_value, int8_t gas_value)
  */
 #define GAS_LOW 0 	/* lower bound for input */
 #define GAS_HIGH 60 	/* higher bound for input */
-#define GAS_CENTER 101	/* PWM value for 2.5v */
+#define GAS_CENTER 90	/* PWM value for 2.5v */
 void dac_set_gas(uint8_t gas_value)
 {
 	uint16_t pwm_val;
@@ -101,7 +101,6 @@ void dac_set_gas(uint8_t gas_value)
 
 	/* unorthodox way to get the offset values from potentiometers */
 	pots_read_offsets(&steer_offset, &gas_offset);
-
 
 	/* check input */
 	if (gas_value > GAS_HIGH)
@@ -118,7 +117,8 @@ void dac_set_gas(uint8_t gas_value)
 	pwm_val += GAS_CENTER;
 	
 	/* set PWM with previously acquired ADC offset */
-	OCR1A = (pwm_val << 2) - 64 + gas_offset/2; 
+	OCR1B = (pwm_val << 2) - 64 + gas_offset/2; 
+
 	return;
 }
 
@@ -128,7 +128,7 @@ void dac_set_gas(uint8_t gas_value)
  */
 #define STEER_LOW 0		/* lower bound for input */
 #define STEER_HIGH 60		/* higher bound for input */
-#define STEER_CENTER 95	/* pwm value for 2.5v */
+#define STEER_CENTER 70	/* pwm value for 2.5v */
 void dac_set_steer(uint8_t steer_value)
 {
 	uint16_t pwm_val = 0;
@@ -149,6 +149,6 @@ void dac_set_steer(uint8_t steer_value)
 	pwm_val += STEER_CENTER;
 	
 	// set Steering PWM
-	OCR1B = (pwm_val << 2) - 64 + steer_offset/2;
+	OCR1A = (pwm_val << 2) - 64 + steer_offset/2;
 	return;
 }

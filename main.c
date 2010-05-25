@@ -40,6 +40,8 @@ int main(void)
 
 	while(1)
 	{
+
+		read_config(&flags);
 		nunchuk_refresh(&my_nunchuk);
 
 		acc_dec(&my_nunchuk, &forward, &angular);

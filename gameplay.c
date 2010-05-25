@@ -5,6 +5,15 @@ void init_flags(Flags * _flags)
 {
 	_flags->boost_available = 1;
 	_flags->boost_enabled = 0;
+
+	/* config pins as inputs */
+	CONFIG_DDR &= ~(CONFIG_MASK);
+	/* enable pullups */
+	CONFIG_PORT |= CONFIG_MASK;
+
+	/* debug pins as outputs */
+	DEBUG_PORT &= ~(DEBUG_MASK);
+	DEBUG_DDR |= DEBUG_MASK;
 }
 /*
  * Boost timer, step one : boost is active for a short while
@@ -67,5 +76,7 @@ void read_config(Flags * _flags)
 	 * ( remove speed limits )
 	 */
 	read_pin(CONFIG_DANGEROUS, 	most_dangerous_game);
+
+	DEBUG_PORT = CONFIG_PINS << 4;
 }
 

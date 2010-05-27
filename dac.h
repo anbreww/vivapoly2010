@@ -20,5 +20,5 @@ void dac_init(void);
 void pots_read_offsets(uint8_t *steer_offset, uint8_t *gas_offset);
 void adc_init(void);
 void dac_set_offsets(int8_t steer_value, int8_t gas_value);
-void dac_set_gas(uint8_t gas_value);
-void dac_set_steer(uint8_t steer_value);
+void dac_set_gas(uint8_t gas_value, Flags * _flags);
+void dac_set_steer(uint8_t steer_value, Flags * _flags);

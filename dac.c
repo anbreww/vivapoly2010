@@ -2,8 +2,8 @@
 #include <avr/io.h>
 #include <util/delay.h>
 
-#include "dac.h"
 #include "gameplay.h"
+#include "dac.h"
 
 //static uint8_t _steer_offset;
 //static uint8_t _gas_offset;
@@ -95,12 +95,21 @@ void dac_set_offsets(int8_t steer_value, int8_t gas_value)
  */
 #define GAS_LOW 	0 	/* lower bound for input */
 #define GAS_HIGH 	60 	/* higher bound for input */
-#define GAS_CENTER 	90	/* PWM value for 2.5v */
+#define GAS_CENTER 	70	/* PWM value for 2.5v */
 #define GAS_TOP	 	60	/* top bound, for reversing */
-void dac_set_gas(uint8_t gas_value)
+void dac_set_gas(uint8_t gas_value, Flags * _flags)
 {
 	uint16_t pwm_val;
 	uint8_t steer_offset, gas_offset;
+
+	if(_flags->reverse_speed)
+	{
+		DEBUG_PORT |= (1<<DEBUG_LGREEN);
+		gas_value = GAS_TOP - gas_value;
+	}
+	else
+		DEBUG_PORT &= ~(1<<DEBUG_LGREEN);
+
 
 	/* unorthodox way to get the offset values from potentiometers */
 	pots_read_offsets(&steer_offset, &gas_offset);
@@ -120,7 +129,7 @@ void dac_set_gas(uint8_t gas_value)
 	pwm_val += GAS_CENTER;
 	
 	/* set PWM with previously acquired ADC offset */
-	OCR1B = (pwm_val << 2) - 64 + gas_offset/2; 
+	OCR1B = (pwm_val << 2) - 128 + gas_offset; 
 
 	return;
 }
@@ -131,12 +140,22 @@ void dac_set_gas(uint8_t gas_value)
  */
 #define STEER_LOW 	0	/* lower bound for input */
 #define STEER_HIGH 	60	/* higher bound for input */
-#define STEER_CENTER 	70	/* pwm value for 2.5v */
+#define STEER_CENTER 	60	/* pwm value for 2.5v */
 #define STEER_TOP	60	/* top bound, for reversing */
-void dac_set_steer(uint8_t steer_value)
+void dac_set_steer(uint8_t steer_value, Flags * _flags)
 {
 	uint16_t pwm_val = 0;
 	uint8_t steer_offset, gas_offset;
+
+
+	if (_flags->reverse_steering)
+	{
+		DEBUG_PORT |= (1<<DEBUG_RGREEN);
+		steer_value = STEER_TOP - steer_value;
+	}
+	else
+		DEBUG_PORT &= ~(1<<DEBUG_RGREEN);
+
 
 	pots_read_offsets(&steer_offset, &gas_offset);
 
@@ -153,6 +172,6 @@ void dac_set_steer(uint8_t steer_value)
 	pwm_val += STEER_CENTER;
 	
 	// set Steering PWM
-	OCR1A = (pwm_val << 2) - 64 + steer_offset/2;
+	OCR1A = (pwm_val << 2) - 128 + steer_offset;
 	return;
 }

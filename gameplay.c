@@ -77,7 +77,7 @@ void read_config(Flags * _flags)
 	 */
 	read_pin(CONFIG_DANGEROUS, 	most_dangerous_game);
 
-	DEBUG_PORT = ~((CONFIG_PINS << 4) | (CONFIG_PINS & 0x01)) & 0xe1;
+	//DEBUG_PORT = ~((CONFIG_PINS << 4) | (CONFIG_PINS & 0x01)) & 0xe1;
 
 }
 

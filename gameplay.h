@@ -15,8 +15,8 @@
 #define CONFIG_MASK	0x1F
 #define CONFIG_DANGEROUS	PA0
 #define CONFIG_RANDOM		PA1
-#define CONFIG_REV_STEER	PA2
-#define CONFIG_REV_SPEED	PA3
+#define CONFIG_REV_SPEED	PA2
+#define CONFIG_REV_STEER	PA3
 #define CONFIG_KILLSWITCH	PA4	/* main disable switch */
 
 #define DEBUG_PORT	PORTB

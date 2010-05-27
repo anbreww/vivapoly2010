@@ -5,8 +5,8 @@
 #include <stdio.h>
 #include <util/delay.h>
 //#include "robopoly.h"
-#include "dac.h"
 #include "gameplay.h"
+#include "dac.h"
 
 
 #define M_forward_MUL	43
@@ -48,8 +48,8 @@ int main(void)
 
 		acc_dec(&my_nunchuk, &forward, &angular);
 
-		dac_set_gas(forward);
-		dac_set_steer(angular);
+		dac_set_gas(forward, &flags);
+		dac_set_steer(angular, &flags);
 
 
 		_delay_ms(20);

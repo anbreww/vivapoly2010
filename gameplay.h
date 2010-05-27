@@ -21,7 +21,15 @@
 
 #define DEBUG_PORT	PORTB
 #define DEBUG_DDR	DDRB
-#define DEBUG_MASK	0xF0
+#define DEBUG_MASK	0xe7		/* which pins have LEDs on them */
+
+#define DEBUG_LGREEN	PB0		/* left group of leds */
+#define DEBUG_LYELLOW	PB1
+#define DEBUG_LRED	PB2
+
+#define DEBUG_RGREEN	PB5		/* right group of leds */
+#define DEBUG_RYELLOW	PB6
+#define DEBUG_RRED	PB7
 
 /*
  * Flags store current game status

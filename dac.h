@@ -13,8 +13,8 @@
 #define DAC_DDR		DDRD
 
 #define ADC_PORT	PORTA
-#define TRIM_STEER	PA7	/* pot to set steering offset */
-#define TRIM_GAS	PA6	/* pot to set gas offset */
+#define TRIM_STEER	PA6	/* pot to set steering offset */
+#define TRIM_GAS	PA7	/* pot to set gas offset */
 
 void dac_init(void);
 void pots_read_offsets(uint8_t *steer_offset, uint8_t *gas_offset);

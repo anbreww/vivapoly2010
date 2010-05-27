@@ -3,9 +3,11 @@
 #include <util/delay.h>
 
 #include "dac.h"
+#include "gameplay.h"
 
 //static uint8_t _steer_offset;
 //static uint8_t _gas_offset;
+//int blah;
 
 void dac_init(void)
 {
@@ -42,13 +44,13 @@ void pots_read_offsets(uint8_t *steer_offset, uint8_t *gas_offset)
 	/* get results from ADC */
 	ADCSRA = 0x87; 
 
-	ADMUX =0x20+7;  // STEERING BIT
+	ADMUX =0x20+6;  // STEERING BIT
 	ADCSRA |= (1<<ADSC); 
 	while((ADCSRA & (1<<ADSC))>>ADSC);
 
 	steer_adc = ADCH; 
 
-	ADMUX =0x20+6;  // GAS BIT
+	ADMUX =0x20+7;  // GAS BIT
 	ADCSRA |= (1<<ADSC); 
 	while((ADCSRA & (1<<ADSC))>>ADSC);
 
@@ -91,9 +93,10 @@ void dac_set_offsets(int8_t steer_value, int8_t gas_value)
  * gas_value : 1 step = 20mV
  * gas_offset : full range  = 1.2V
  */
-#define GAS_LOW 0 	/* lower bound for input */
-#define GAS_HIGH 60 	/* higher bound for input */
-#define GAS_CENTER 90	/* PWM value for 2.5v */
+#define GAS_LOW 	0 	/* lower bound for input */
+#define GAS_HIGH 	60 	/* higher bound for input */
+#define GAS_CENTER 	90	/* PWM value for 2.5v */
+#define GAS_TOP	 	60	/* top bound, for reversing */
 void dac_set_gas(uint8_t gas_value)
 {
 	uint16_t pwm_val;
@@ -126,9 +129,10 @@ void dac_set_gas(uint8_t gas_value)
  * set car's direction. 0 should be center, positive = right
  * adjust with potentiometer until zero centers wheels
  */
-#define STEER_LOW 0		/* lower bound for input */
-#define STEER_HIGH 60		/* higher bound for input */
-#define STEER_CENTER 70	/* pwm value for 2.5v */
+#define STEER_LOW 	0	/* lower bound for input */
+#define STEER_HIGH 	60	/* higher bound for input */
+#define STEER_CENTER 	70	/* pwm value for 2.5v */
+#define STEER_TOP	60	/* top bound, for reversing */
 void dac_set_steer(uint8_t steer_value)
 {
 	uint16_t pwm_val = 0;

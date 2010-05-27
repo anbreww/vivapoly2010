@@ -29,6 +29,8 @@ int angular = 0;
 
 Flags flags;
 
+//extern int blah;
+
 
 int main(void)
 {

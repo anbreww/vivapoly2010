@@ -93,9 +93,9 @@ void dac_set_offsets(int8_t steer_value, int8_t gas_value)
  * gas_value : 1 step = 20mV
  * gas_offset : full range  = 1.2V
  */
-#define GAS_LOW 	0 	/* lower bound for input */
-#define GAS_HIGH 	60 	/* higher bound for input */
-#define GAS_CENTER 	70	/* PWM value for 2.5v */
+#define GAS_LOW 	14 	/* lower bound for input */
+#define GAS_HIGH 	46 	/* higher bound for input */
+#define GAS_CENTER 	60	/* PWM value for 2.5v */
 #define GAS_TOP	 	60	/* top bound, for reversing */
 void dac_set_gas(uint8_t gas_value, Flags * _flags)
 {
@@ -123,13 +123,13 @@ void dac_set_gas(uint8_t gas_value, Flags * _flags)
 		pwm_val = gas_value;
 
 	/* invert controls (speed control is inverted) */
-	pwm_val = GAS_HIGH - pwm_val;
+	pwm_val = GAS_TOP - pwm_val;
 
 	/* add hard-coded offset for 2.5v */
 	pwm_val += GAS_CENTER;
 	
 	/* set PWM with previously acquired ADC offset */
-	OCR1B = (pwm_val << 2) - 128 + gas_offset; 
+	OCR1B = (pwm_val << 2) - 64 + gas_offset/2; 
 
 	return;
 }
@@ -172,6 +172,6 @@ void dac_set_steer(uint8_t steer_value, Flags * _flags)
 	pwm_val += STEER_CENTER;
 	
 	// set Steering PWM
-	OCR1A = (pwm_val << 2) - 128 + steer_offset;
+	OCR1A = (pwm_val << 2) - 64 + steer_offset/2;
 	return;
 }

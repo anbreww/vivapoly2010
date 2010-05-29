@@ -63,8 +63,8 @@ void acc_dec(nunchuk * _nunchuk, int * _forward, int * _angular)
 {
 	long int forward_temp, angular_temp;
 	
-	forward_temp = ((long int)(_nunchuk->acc_y) * M_forward_MUL) / M_forward_DIV + OFFSET_forward;
-	angular_temp = ((long int)(_nunchuk->acc_x) * M_ANGULAR_MUL) / M_ANGULAR_DIV + OFFSET_ANGULAR;
+	forward_temp = ((long int)(_nunchuk->stick_y) * M_forward_MUL) / M_forward_DIV + OFFSET_forward;
+	angular_temp = ((long int)(_nunchuk->stick_x) * M_ANGULAR_MUL) / M_ANGULAR_DIV + OFFSET_ANGULAR;
 
 	/* When Z button is released, stop all motors */
 	if( (_nunchuk->button_Z) )
